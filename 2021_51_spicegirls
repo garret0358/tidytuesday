@@ -1,0 +1,74 @@
+# 2021 Week 51 tidy tuesday
+# The music of the Spice Girls 
+
+# Load data
+library(tidyverse)
+library(skimr)
+library(ggplot2)
+library(Hmisc)
+library(patchwork)
+library(ggtext)
+
+# Load data
+studio_album_tracks <- readr::read_csv("https://github.com/jacquietran/spice_girls_data/raw/main/data/studio_album_tracks.csv")
+
+
+# For a chart comparing valence with mode
+# Make a smaller table
+music_q <- studio_album_tracks %>% 
+  select(album_name, track_number, track_name, duration_ms, key_mode, key_name, mode_name, key, mode, tempo, time_signature, valence, danceability, energy, instrumentalness, acousticness, loudness)
+head(music_q)
+
+# Plot the data
+ggplot(data = music_q, aes(x = mode_name, y = valence)) +
+  geom_violin(fill = "#f3e697", color = "#ffdb01", alpha= .5) +
+  stat_summary(fun = "mean", geom = "crossbar", width = .3, color = "#f778e4") +
+  geom_point(color = "#c84ec8") +
+  coord_flip() +
+  labs(
+    x = "Mode", 
+    y = "Level of Valence", 
+    title = "Mode/Valence", 
+    subtitle = "Spice Girls songs written in minor keys tend to be perceived as positve:", 
+    caption = "<b>Data:</b> Spotify, <b>Graphic:</b> Garret P", 
+    alt = "This violin plot compares the mode of Spice Girls songs with the valence. The songs written in minor keys tend to be perceived as positive."
+    )+
+  theme_minimal() +
+  theme(plot.caption = element_markdown()) +
+  annotate(geom = "text", x = 1.4, y = .03, label = "Songs in a major key have a wide range of valence", hjust = "left")
+
+# For making a chart comparing mean musical qualities for all songs
+# Make a summary table
+sum_mode_df <- studio_album_tracks %>% 
+  select(mode_name, danceability, valence, energy, acousticness, instrumentalness) %>% 
+  group_by(mode_name) %>% 
+  summarize_if(is.numeric, mean, na.rm = TRUE)
+rdf3 <- sum_mode_df %>% 
+  pivot_longer(!mode_name, names_to = "quality") %>% 
+  arrange(-value)
+
+# Plot the data
+ggplot(data = rdf3, aes(x = quality, y = value, color = mode_name)) +
+  geom_point(alpha = .8, size = 3) +
+  scale_color_manual(values = c("#fab249", "#c84ec8")) +
+  coord_flip() +
+  annotate(
+    geom = "richtext", 
+    x = 4.5, 
+    y = .8, 
+    label = "Songs in <b><span style = 'color:#fab249;'>major</span></b> keys tend not to be as 'positive' as songs in <b><span style = 'color:#c84ec8;'>minor</span></b> keys", 
+    hjust = "right", 
+    fill = NA, 
+    label.color = NA
+    ) +
+  labs(
+    title = "Musical Quality of Major and Minor Modes", 
+    subtitle = "Comparing the musical qualities of Spice Girls songs in <b><span style = 'color:#fab249;'>major</span></b> and <b><span style = 'color:#c84ec8;'>minor</span></b> keys", 
+    alt = "This scatterplot compares the mean values for valence, instrumentalness, energy, danceability, and acousticness for all Spice Girls songs. The mean valence for major keys is lower than for minor keys."
+    ) +
+  theme_minimal() +
+  theme(legend.position = "none", 
+        plot.subtitle = element_markdown(), 
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank()
+        )
