@@ -64,11 +64,13 @@ ggplot(data = rdf3, aes(x = quality, y = value, color = mode_name)) +
   labs(
     title = "Musical Quality of Major and Minor Modes", 
     subtitle = "Comparing the musical qualities of Spice Girls songs in <b><span style = 'color:#fab249;'>major</span></b> and <b><span style = 'color:#c84ec8;'>minor</span></b> keys", 
+    caption = "<b>Data:</b> Spotify, <b>Graphic:</b> Garret P",
     alt = "This scatterplot compares the mean values for valence, instrumentalness, energy, danceability, and acousticness for all Spice Girls songs. The mean valence for major keys is lower than for minor keys."
     ) +
   theme_minimal() +
   theme(legend.position = "none", 
         plot.subtitle = element_markdown(), 
+        plot.caption = elecment_markdown(),
         axis.title.x = element_blank(),
         axis.title.y = element_blank()
         )
