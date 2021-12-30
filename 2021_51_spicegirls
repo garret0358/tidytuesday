@@ -70,7 +70,7 @@ ggplot(data = rdf3, aes(x = quality, y = value, color = mode_name)) +
   theme_minimal() +
   theme(legend.position = "none", 
         plot.subtitle = element_markdown(), 
-        plot.caption = elecment_markdown(),
+        plot.caption = element_markdown(),
         axis.title.x = element_blank(),
         axis.title.y = element_blank()
         )
