@@ -1,0 +1,29 @@
+# Load library
+library(tidyverse)
+library(ggplot2)
+library(ggtext)
+library(janitor)
+
+# Load data
+breed_traits <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-02-01/breed_traits.csv')
+
+# Make a clean table isolating the traits related to grooming
+grooming_traits <- breed_traits %>% 
+  clean_names() %>%
+  select(breed, shedding_level, coat_grooming_frequency, coat_type, coat_length) %>% 
+  slice(-167)
+
+# Make a scatter plot comparing sheeding level with coat grooming frequency over different coat types  
+ggplot(data = grooming_traits, aes(x = shedding_level, y = coat_grooming_frequency)) +
+  geom_jitter(aes(color = coat_type), alpha = .5) +
+  facet_wrap(coat_type ~ .) +
+  labs(
+    x = "Shedding level", 
+    y = "Coat grooming frequency", 
+    title = "<b>Traits Affecting Grooming</b>", 
+    subtitle = "Comparing grooming frequency and shedding level across various coat types",
+    caption = "<b>Data:</b> American Kennel Club | <b>Graphic:</b> Garret P",
+    alt = "This scatter plot compares grooming frequency and shedding level across various coat types.",
+    color = "Coat type") +
+  theme_light() +
+  theme(plot.caption = element_markdown(), plot.title = element_markdown())
